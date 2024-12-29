@@ -1,0 +1,147 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+
+class InventoryItem {
+    private String name;
+    private int quantity;
+    private double price;
+
+    public InventoryItem(String name, int quantity, double price) {
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    @Override
+    public String toString() {
+        return name + " | Qty: " + quantity + " | Price: " + price;
+    }
+}
+
+class InventorySystem extends Frame {
+    private List<InventoryItem> inventory = new ArrayList<>();
+    private TextArea displayArea;
+    private TextField nameField, quantityField, priceField, searchField;
+    
+    public InventorySystem() {
+        setTitle("Inventory Management System");
+        setSize(600, 400);
+        setLayout(new FlowLayout());
+
+        Label nameLabel = new Label("Name:");
+        Label quantityLabel = new Label("Quantity:");
+        Label priceLabel = new Label("Price:");
+        Label searchLabel = new Label("Search:");
+
+        nameField = new TextField(15);
+        quantityField = new TextField(5);
+        priceField = new TextField(7);
+        searchField = new TextField(15);
+
+        Button addButton = new Button("Add");
+        Button viewButton = new Button("View");
+        Button deleteButton = new Button("Delete");
+        Button searchButton = new Button("Search");
+
+        displayArea = new TextArea(15, 50);
+        displayArea.setEditable(false);
+
+        add(nameLabel);
+        add(nameField);
+        add(quantityLabel);
+        add(quantityField);
+        add(priceLabel);
+        add(priceField);
+        add(addButton);
+
+        add(viewButton);
+        add(deleteButton);
+        add(searchLabel);
+        add(searchField);
+        add(searchButton);
+
+        add(displayArea);
+
+        addButton.addActionListener(e -> addItem());
+        viewButton.addActionListener(e -> viewItems());
+        deleteButton.addActionListener(e -> deleteItem());
+        searchButton.addActionListener(e -> searchItem());
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                System.exit(0);
+            }
+        });
+
+        setVisible(true);
+    }
+
+    private void addItem() {
+        String name = nameField.getText();
+        int quantity;
+        double price;
+
+        try {
+            quantity = Integer.parseInt(quantityField.getText());
+            price = Double.parseDouble(priceField.getText());
+            inventory.add(new InventoryItem(name, quantity, price));
+            displayArea.setText("Item added successfully!");
+        } catch (NumberFormatException e) {
+            displayArea.setText("Invalid quantity or price. Please enter valid numbers.");
+        }
+    }
+
+    private void viewItems() {
+        if (inventory.isEmpty()) {
+            displayArea.setText("No items in inventory.");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (InventoryItem item : inventory) {
+                sb.append(item.toString()).append("\n");
+            }
+            displayArea.setText(sb.toString());
+        }
+    }
+
+    private void deleteItem() {
+        String name = nameField.getText();
+        boolean found = inventory.removeIf(item -> item.getName().equalsIgnoreCase(name));
+        if (found) {
+            displayArea.setText("Item deleted successfully!");
+        } else {
+            displayArea.setText("Item not found.");
+        }
+    }
+
+    private void searchItem() {
+        String name = searchField.getText();
+        for (InventoryItem item : inventory) {
+            if (item.getName().equalsIgnoreCase(name)) {
+                displayArea.setText(item.toString());
+                return;
+            }
+        }
+        displayArea.setText("Item not found.");
+    }
+}  
+public class miniproject{
+
+ public static void main(String[] args) {
+        new InventorySystem();
+    }
+}
+
